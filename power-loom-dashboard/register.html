@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Power Loom | Register</title>
+        <link rel="stylesheet" href="auth.css" />
+    </head>
+    <body class="auth-page">
+        <div class="auth-shell">
+            <aside class="auth-panel">
+                <div class="brand-lockup">
+                    <div class="brand-mark">🏭</div>
+                    <div class="brand-copy">
+                        <h1>Power Loom</h1>
+                        <p>Secure account creation</p>
+                    </div>
+                </div>
+
+                <p class="panel-copy">
+                    Create your account to access live system data, schedule alerts,
+                    and manage loom operations with confidence.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-badge">👤</div>
+                        <span>Separate user and admin account access</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-badge">🛡️</div>
+                        <span>Protected authentication and system security</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-badge">✅</div>
+                        <span>Ready for dashboard use after registration</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="auth-form-panel">
+                <div class="auth-header">
+                    <span class="auth-kicker">Create account</span>
+                    <h2>Sign Up</h2>
+                    <p>Set up a new user or admin profile below.</p>
+                </div>
+
+                <div class="role-toggle" aria-label="Choose account type">
+                    <button class="role-btn active" type="button" data-role="user">User Sign Up</button>
+                    <button class="role-btn" type="button" data-role="admin">Admin Sign Up</button>
+                </div>
+
+                <form class="auth-form" id="registerForm">
+                    <div class="form-row">
+                        <div class="field">
+                            <label for="firstName">First name</label>
+                            <input id="firstName" name="firstName" type="text" placeholder="First name" required />
+                        </div>
+
+                        <div class="field">
+                            <label for="lastName">Last name</label>
+                            <input id="lastName" name="lastName" type="text" placeholder="Last name" required />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="registerEmail">Email address</label>
+                        <input id="registerEmail" name="email" type="email" placeholder="name@company.com" required />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="field">
+                            <label for="registerPassword">Password</label>
+                            <input id="registerPassword" name="password" type="password" placeholder="Create password" required />
+                        </div>
+
+                        <div class="field">
+                            <label for="confirmPassword">Confirm password</label>
+                            <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm password" required />
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-wrap">
+                            <input type="checkbox" name="terms" required />
+                            <span>I agree to the terms</span>
+                        </label>
+                        <a href="login.html" class="link-text">Already registered</a>
+                    </div>
+
+                    <button class="primary-btn" type="submit">Sign Up</button>
+                    <div id="registerStatus" class="status-message" aria-live="polite"></div>
+                </form>
+            </main>
+        </div>
+
+        <script>
+            const roleButtons = document.querySelectorAll('.role-btn');
+            const registerForm = document.getElementById('registerForm');
+            const registerStatus = document.getElementById('registerStatus');
+            let selectedRole = 'user';
+
+            roleButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    roleButtons.forEach((item) => item.classList.remove('active'));
+                    button.classList.add('active');
+                    selectedRole = button.dataset.role;
+                    registerStatus.textContent = selectedRole === 'admin'
+                        ? 'Admin account selected.'
+                        : 'User account selected.';
+                    registerStatus.classList.remove('error');
+                });
+            });
+
+            function showRegisterError(message) {
+                registerStatus.textContent = message;
+                registerStatus.classList.add('error');
+            }
+
+            registerForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const email = document.getElementById('registerEmail').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                    showRegisterError('Please fill in all required fields.');
+                    return;
+                }
+
+                if (firstName.length < 2 || lastName.length < 2) {
+                    showRegisterError('First name and last name must be at least 2 characters long.');
+                    return;
+                }
+
+                if (!emailPattern.test(email)) {
+                    showRegisterError('Please enter a valid email address.');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showRegisterError('Password must be at least 6 characters long.');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showRegisterError('Passwords do not match.');
+                    return;
+                }
+
+                const existingAccounts = JSON.parse(localStorage.getItem('powerLoomAccounts') || '[]');
+                const duplicateEmail = existingAccounts.some(
+                    (user) => user.email.toLowerCase() === email.toLowerCase() && user.role === selectedRole
+                );
+
+                if (duplicateEmail) {
+                    showRegisterError('An account with this email already exists for this role.');
+                    return;
+                }
+
+                const newAccount = {
+                    firstName,
+                    lastName,
+                    email: email.toLowerCase(),
+                    password,
+                    role: selectedRole
+                };
+
+                existingAccounts.push(newAccount);
+                localStorage.setItem('powerLoomAccounts', JSON.stringify(existingAccounts));
+                localStorage.setItem('activeRole', selectedRole);
+                localStorage.setItem('loggedInUser', JSON.stringify({
+                    firstName,
+                    lastName,
+                    email: newAccount.email,
+                    role: selectedRole
+                }));
+
+                registerStatus.textContent = 'Account created successfully. Redirecting...';
+                registerStatus.classList.remove('error');
+
+                setTimeout(() => {
+                    window.location.href = selectedRole === 'admin' ? 'admin-dashboard.html' : 'index.html';
+                }, 500);
+            });
+        </script>
+    </body>
+</html>

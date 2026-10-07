@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Power Loom Monitor</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+                    HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🏭
+        </div>
+
+        <div>
+            <h1>SMART POWER LOOM</h1>
+
+            <p>
+                Humidity Monitoring & Energy Saving System
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="auth-nav" id="authNav">
+            <a href="login.html" class="header-btn nav-link">Login</a>
+            <a href="register.html" class="header-btn nav-link">Register</a>
+        </div>
+
+        <div class="header-user" id="userPanel" style="display:none;">
+            <div class="header-user-badge">U</div>
+            <span id="userLabel">User</span>
+        </div>
+
+        <button class="header-btn" id="logoutBtn" type="button" style="display:none;">Logout</button>
+
+        <div>
+            <div class="connection">
+
+                <span class="connection-dot"></span>
+
+                <span>System Connected</span>
+
+            </div>
+
+            <div id="dateTime"></div>
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+                    MAIN LAYOUT
+===================================================== -->
+
+<div class="layout">
+
+
+<!-- =====================================================
+                    SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-title">
+        MENU
+    </div>
+
+
+    <button class="menu active"
+            onclick="showPage('dashboard', this)">
+
+        <span class="menu-icon">🏠</span>
+
+        <span>Dashboard</span>
+
+    </button>
+
+
+    <button class="menu"
+            onclick="showPage('history', this)">
+
+        <span class="menu-icon">📊</span>
+
+        <span>History</span>
+
+    </button>
+
+
+    <button class="menu"
+            onclick="showPage('alerts', this)">
+
+        <span class="menu-icon">🔔</span>
+
+        <span>Alerts</span>
+
+        <span class="alert-count">2</span>
+
+    </button>
+
+
+    <button class="menu"
+            onclick="showPage('energy', this)">
+
+        <span class="menu-icon">⚡</span>
+
+        <span>Energy Saving</span>
+
+    </button>
+
+
+    <button class="menu"
+            onclick="showPage('settings', this)">
+
+        <span class="menu-icon">⚙️</span>
+
+        <span>Settings</span>
+
+    </button>
+
+
+    <button class="menu"
+            onclick="showPage('about', this)">
+
+        <span class="menu-icon">ℹ️</span>
+
+        <span>About</span>
+
+    </button>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="support-card">
+
+            <div>💡</div>
+
+            <p>Need Help?</p>
+
+            <small>
+                Check the system status
+            </small>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+                    CONTENT
+===================================================== -->
+
+<main class="content">
+
+
+<!-- =====================================================
+                    DASHBOARD
+===================================================== -->
+
+<section id="dashboard" class="page">
+
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>Dashboard</h2>
+
+            <p>
+                Monitor your loom at a glance
+            </p>
+
+        </div>
+
+        <div class="last-update">
+
+            ● Live Data
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+                    STATUS BANNER
+    ================================================== -->
+
+    <div class="status-banner normal-banner"
+         id="statusBanner">
+
+        <div class="status-symbol" id="statusSymbol">
+            ✓
+        </div>
+
+        <div class="status-text">
+
+            <h2 id="mainStatus">
+                NO ACTION NEEDED
+            </h2>
+
+            <p id="mainMessage">
+                Your loom is operating normally.
+            </p>
+
+        </div>
+
+        <div class="status-time">
+
+            Last checked:
+            <strong id="lastChecked">
+                Just now
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+                    SENSOR CARDS
+    ================================================== -->
+
+    <div class="cards">
+
+
+        <!-- HUMIDITY -->
+
+        <div class="sensor-card humidity-card tooltip">
+
+            <div class="card-top">
+
+                <div class="card-icon humidity-icon">
+                    💧
+                </div>
+
+                <span class="info-icon">
+                    ?
+                </span>
+
+                <span class="tooltip-text">
+                    Measures moisture in the air.
+                    High humidity can affect yarn quality.
+                </span>
+
+            </div>
+
+
+            <div class="card-label">
+                HUMIDITY
+            </div>
+
+
+            <div class="card-value">
+
+                <span id="humidity">
+                    68
+                </span>
+
+                <span class="unit">
+                    %RH
+                </span>
+
+            </div>
+
+
+            <div class="card-status safe"
+                 id="humidityStatus">
+
+                ● SAFE
+
+            </div>
+
+
+            <div class="threshold">
+
+                Safe limit:
+                <strong>
+                    <span id="displayThreshold">
+                        70
+                    </span>%RH
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TEMPERATURE -->
+
+        <div class="sensor-card temperature-card tooltip">
+
+            <div class="card-top">
+
+                <div class="card-icon temperature-icon">
+                    🌡️
+                </div>
+
+                <span class="info-icon">
+                    ?
+                </span>
+
+                <span class="tooltip-text">
+                    Shows the current temperature
+                    near the power loom.
+                </span>
+
+            </div>
+
+
+            <div class="card-label">
+                TEMPERATURE
+            </div>
+
+
+            <div class="card-value">
+
+                <span id="temperature">
+                    30
+                </span>
+
+                <span class="unit">
+                    °C
+                </span>
+
+            </div>
+
+
+            <div class="card-status safe">
+
+                ● NORMAL
+
+            </div>
+
+
+            <div class="threshold">
+
+                Normal range:
+                <strong>20–35°C</strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LOOM -->
+
+        <div class="sensor-card loom-card tooltip">
+
+            <div class="card-top">
+
+                <div class="card-icon loom-icon">
+                    ⚙️
+                </div>
+
+                <span class="info-icon">
+                    ?
+                </span>
+
+                <span class="tooltip-text">
+                    Vibration sensor detects whether
+                    the loom is running.
+                </span>
+
+            </div>
+
+
+            <div class="card-label">
+                LOOM STATUS
+            </div>
+
+
+            <div class="card-value status-value"
+                 id="loomStatus">
+
+                RUNNING
+
+            </div>
+
+
+            <div class="card-status safe">
+
+                ● VIBRATION DETECTED
+
+            </div>
+
+
+            <div class="threshold">
+
+                Started:
+                <strong>08:20 AM</strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LIGHT -->
+
+        <div class="sensor-card light-card tooltip">
+
+            <div class="card-top">
+
+                <div class="card-icon light-icon">
+                    💡
+                </div>
+
+                <span class="info-icon">
+                    ?
+                </span>
+
+                <span class="tooltip-text">
+                    Additional loom light.
+                    It automatically turns OFF
+                    when the loom is not in use.
+                </span>
+
+            </div>
+
+
+            <div class="card-label">
+                LIGHT STATUS
+            </div>
+
+
+            <div class="card-value status-value"
+                 id="lightStatus">
+
+                ON
+
+            </div>
+
+
+            <div class="card-status safe">
+
+                ● AUTOMATIC
+
+            </div>
+
+
+            <div class="threshold">
+
+                Loom is currently in use
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+                    SECOND ROW
+    ================================================== -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- LOOM ACTIVITY -->
+
+        <div class="panel loom-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>⚙️ Loom Activity</h3>
+
+                    <p>
+                        Current machine activity
+                    </p>
+
+                </div>
+
+                <span class="live-badge">
+                    LIVE
+                </span>
+
+            </div>
+
+
+            <div class="loom-status-large">
+
+                <div class="pulse-circle">
+                    ⚙️
+                </div>
+
+                <div>
+
+                    <h2 id="loomActivityText">
+                        LOOM RUNNING
+                    </h2>
+
+                    <p>
+                        Vibration detected
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="activity-details">
+
+                <div>
+                    <span>Running since</span>
+                    <strong>08:20 AM</strong>
+                </div>
+
+                <div>
+                    <span>Running time</span>
+                    <strong>05h 42m</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LIGHT CONTROL -->
+
+        <div class="panel light-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>💡 Light Control</h3>
+
+                    <p>
+                        Automatic energy saving
+                    </p>
+
+                </div>
+
+                <span class="auto-badge">
+                    AUTO
+                </span>
+
+            </div>
+
+
+            <div class="light-control">
+
+                <div class="bulb">
+                    💡
+                </div>
+
+                <div>
+
+                    <h2 id="lightControlText">
+                        Light is ON
+                    </h2>
+
+                    <p id="lightControlMessage">
+                        Loom is currently in use
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="control-row">
+
+                <span>
+                    Automatic control
+                </span>
+
+                <label class="switch">
+
+                    <input type="checkbox"
+                           id="autoLight"
+                           checked
+                           onchange="toggleAutoLight()">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <button class="secondary-button"
+                    onclick="toggleLight()">
+
+                💡 Manual Light Control
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+                    GRAPH + ALERT
+    ================================================== -->
+
+    <div class="dashboard-grid graph-grid">
+
+
+        <!-- GRAPH -->
+
+        <div class="panel chart-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>📈 Humidity Trend</h3>
+
+                    <p>
+                        Monitor humidity throughout the day
+                    </p>
+
+                </div>
+
+
+                <select id="chartRange"
+                        onchange="changeChartRange()">
+
+                    <option>Today</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="humidityChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ALERT -->
+
+        <div class="panel alert-panel"
+             id="alertPanel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>🔔 Latest Alert</h3>
+
+                    <p>
+                        Important system notification
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="alert-content">
+
+                <div class="alert-icon">
+                    ⚠️
+                </div>
+
+                <h2>
+                    High Humidity
+                </h2>
+
+                <p>
+                    Humidity crossed the safe limit.
+                </p>
+
+
+                <div class="alert-values">
+
+                    <div>
+
+                        <span>Current</span>
+
+                        <strong id="alertHumidity">
+                            72.5 %RH
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>Safe Limit</span>
+
+                        <strong>
+                            70 %RH
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <button class="alert-button"
+                        onclick="showAlertDetails()">
+
+                    View Alert Details →
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+                    BOTTOM CARDS
+    ================================================== -->
+
+    <div class="bottom-grid">
+
+
+        <!-- ENERGY -->
+
+        <div class="panel energy-panel tooltip">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>⚡ Energy Saved</h3>
+
+                    <p>
+                        Today's electricity saving
+                    </p>
+
+                </div>
+
+                <span class="info-icon">
+                    ?
+                </span>
+
+                <span class="tooltip-text">
+                    Estimated electricity saved
+                    by automatically switching off
+                    the light.
+                </span>
+
+            </div>
+
+
+            <div class="energy-number">
+
+                1.8
+
+                <span>kWh</span>
+
+            </div>
+
+
+            <div class="energy-message">
+
+                🌱 Good job! Energy is being saved.
+
+            </div>
+
+
+            <div class="energy-bar">
+
+                <div class="energy-progress"></div>
+
+            </div>
+
+
+            <div class="energy-footer">
+
+                <span>
+                    Estimated saving
+                </span>
+
+                <strong>
+                    ₹14.40
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TODAY SUMMARY -->
+
+        <div class="panel summary-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>📅 Today's Summary</h3>
+
+                    <p>
+                        Quick overview
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-list">
+
+                <div>
+
+                    <span>⚙️ Loom running</span>
+
+                    <strong>7h 25m</strong>
+
+                </div>
+
+                <div>
+
+                    <span>🔔 Humidity alerts</span>
+
+                    <strong>2</strong>
+
+                </div>
+
+                <div>
+
+                    <span>💡 Light OFF time</span>
+
+                    <strong>2h 15m</strong>
+
+                </div>
+
+                <div>
+
+                    <span>⚡ Energy saved</span>
+
+                    <strong>1.8 kWh</strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- RECENT ACTIVITY -->
+
+        <div class="panel activity-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>🕒 Recent Activity</h3>
+
+                    <p>
+                        Latest system events
+                    </p>
+
+                </div>
+
+                <button class="view-all"
+                        onclick="showPage('history')">
+
+                    View All →
+
+                </button>
+
+            </div>
+
+
+            <div class="activity-list">
+
+                <div class="activity-item">
+
+                    <span class="activity-dot green-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            Loom started
+                        </strong>
+
+                        <small>
+                            08:20 AM
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <span class="activity-dot red-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            High humidity alert
+                        </strong>
+
+                        <small>
+                            09:45 AM
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <span class="activity-dot blue-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            Sensor reading updated
+                        </strong>
+
+                        <small>
+                            10:24 AM
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+                    HISTORY PAGE
+===================================================== -->
+
+<section id="history"
+         class="page hidden">
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>📊 Sensor History</h2>
+
+            <p>
+                View previous loom readings
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel table-panel">
+
+        <div class="table-top">
+
+            <h3>Sensor Records</h3>
+
+            <button class="secondary-button">
+                ⬇ Download Report
+            </button>
+
+        </div>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Humidity</th>
+                    <th>Temperature</th>
+                    <th>Loom</th>
+                    <th>Light</th>
+                    <th>Status</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+                    <td>10 Sep 2026</td>
+                    <td>10:24 AM</td>
+                    <td>68.2 %RH</td>
+                    <td>30.1°C</td>
+                    <td>Running</td>
+                    <td>ON</td>
+                    <td><span class="table-safe">Normal</span></td>
+                </tr>
+
+                <tr>
+                    <td>10 Sep 2026</td>
+                    <td>09:45 AM</td>
+                    <td>72.5 %RH</td>
+                    <td>30.4°C</td>
+                    <td>Running</td>
+                    <td>ON</td>
+                    <td><span class="table-danger">High</span></td>
+                </tr>
+
+                <tr>
+                    <td>10 Sep 2026</td>
+                    <td>08:20 AM</td>
+                    <td>65.8 %RH</td>
+                    <td>29.8°C</td>
+                    <td>Running</td>
+                    <td>ON</td>
+                    <td><span class="table-safe">Normal</span></td>
+                </tr>
+
+                <tr>
+                    <td>10 Sep 2026</td>
+                    <td>06:15 AM</td>
+                    <td>63.5 %RH</td>
+                    <td>28.7°C</td>
+                    <td>Stopped</td>
+                    <td>OFF</td>
+                    <td><span class="table-safe">Normal</span></td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+                    ALERT PAGE
+===================================================== -->
+
+<section id="alerts"
+         class="page hidden">
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>🔔 Alerts</h2>
+
+            <p>
+                Important notifications from your loom
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="alert-history-card">
+
+        <div class="alert-history-icon">
+            ⚠️
+        </div>
+
+        <div class="alert-history-content">
+
+            <h3>High Humidity Detected</h3>
+
+            <p>
+                Humidity reached 72.5 %RH,
+                above the safe limit of 70 %RH.
+            </p>
+
+            <small>
+                Today at 09:45 AM
+            </small>
+
+        </div>
+
+        <span class="danger-label">
+            HIGH
+        </span>
+
+    </div>
+
+
+    <div class="alert-history-card normal-alert">
+
+        <div class="alert-history-icon">
+            ✓
+        </div>
+
+        <div class="alert-history-content">
+
+            <h3>Humidity Returned to Normal</h3>
+
+            <p>
+                Humidity is now within the safe range.
+            </p>
+
+            <small>
+                Today at 10:24 AM
+            </small>
+
+        </div>
+
+        <span class="safe-label">
+            NORMAL
+        </span>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+                    ENERGY PAGE
+===================================================== -->
+
+<section id="energy"
+         class="page hidden">
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>⚡ Energy Saving</h2>
+
+            <p>
+                Track electricity saved by your loom
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="energy-page-grid">
+
+        <div class="energy-big-card">
+
+            <span>
+                Today's Energy Saving
+            </span>
+
+            <strong>
+                1.8 kWh
+            </strong>
+
+            <p>
+                🌱 Automatic light control is helping
+                reduce electricity usage.
+            </p>
+
+        </div>
+
+
+        <div class="energy-big-card">
+
+            <span>
+                Estimated Money Saved
+            </span>
+
+            <strong>
+                ₹14.40
+            </strong>
+
+            <p>
+                Based on today's light usage.
+            </p>
+
+        </div>
+
+
+        <div class="energy-big-card">
+
+            <span>
+                Light OFF Duration
+            </span>
+
+            <strong>
+                2h 15m
+            </strong>
+
+            <p>
+                Light was automatically switched off.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+                    SETTINGS PAGE
+===================================================== -->
+
+<section id="settings"
+         class="page hidden">
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>⚙️ Settings</h2>
+
+            <p>
+                Customize system behaviour
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="settings-box">
+
+
+        <div class="setting-row">
+
+            <div>
+
+                <h3>💧 Humidity Safe Limit</h3>
+
+                <p>
+                    Alert when humidity goes above this value.
+                </p>
+
+            </div>
+
+
+            <div class="setting-control">
+
+                <input type="number"
+                       id="thresholdInput"
+                       value="70">
+
+                <span>%RH</span>
+
+                <button onclick="saveThreshold()">
+                    Save
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="setting-row">
+
+            <div>
+
+                <h3>💡 Automatic Light Control</h3>
+
+                <p>
+                    Automatically turn off light when
+                    loom is inactive.
+                </p>
+
+            </div>
+
+
+            <label class="switch">
+
+                <input type="checkbox"
+                       checked
+                       id="settingsAutoLight">
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+
+        <div class="setting-row">
+
+            <div>
+
+                <h3>⏱️ Light OFF Delay</h3>
+
+                <p>
+                    Time before light automatically turns off.
+                </p>
+
+            </div>
+
+
+            <select>
+
+                <option>5 minutes</option>
+                <option selected>10 minutes</option>
+                <option>15 minutes</option>
+                <option>20 minutes</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+                    ABOUT PAGE
+===================================================== -->
+
+<section id="about"
+         class="page hidden">
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>ℹ️ About</h2>
+
+            <p>
+                About the smart power loom system
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="about-card">
+
+        <div class="about-icon">
+            🏭
+        </div>
+
+        <h2>
+            Smart Humidity Monitoring &
+            Energy-Saving System
+        </h2>
+
+        <p>
+
+            This IoT-based system monitors
+            humidity and temperature around
+            power looms.
+
+        </p>
+
+        <p>
+
+            A vibration sensor detects loom
+            activity and the ESP32 controls
+            the additional light using a relay.
+
+        </p>
+
+        <p>
+
+            When humidity becomes too high,
+            the system alerts the user.
+
+        </p>
+
+        <p>
+
+            When the loom is not in use,
+            the additional light can automatically
+            turn OFF to save electricity.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+
+<!-- =====================================================
+                    TOAST MESSAGE
+===================================================== -->
+
+<div id="toast"
+     class="toast">
+
+    <span id="toastIcon">✓</span>
+
+    <span id="toastMessage">
+        Settings saved
+    </span>
+
+</div>
+
+
+
+<!-- =====================================================
+                    FOOTER
+===================================================== -->
+
+<footer>
+
+    <span>
+        Safer Looms
+    </span>
+
+    <span>|</span>
+
+    <span>
+        Healthier Yarn
+    </span>
+
+    <span>|</span>
+
+    <span>
+        Smarter Energy Use
+    </span>
+
+    <span class="footer-right">
+        📶 Powered by ESP32
+    </span>
+
+</footer>
+
+<script>
+    const authNav = document.getElementById('authNav');
+    const userPanel = document.getElementById('userPanel');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    let storedUser = null;
+    try {
+        const rawUser = localStorage.getItem('loggedInUser');
+        storedUser = rawUser ? JSON.parse(rawUser) : null;
+    } catch (error) {
+        storedUser = null;
+    }
+
+    if (!storedUser || !storedUser.role || !['user', 'admin'].includes(storedUser.role)) {
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('activeRole');
+        window.location.href = 'landing.html';
+        return;
+    }
+
+    if (storedUser.role === 'admin') {
+        window.location.href = 'admin-dashboard.html';
+        return;
+    }
+
+    if (authNav) authNav.style.display = 'none';
+    if (userPanel) userPanel.style.display = 'flex';
+    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+
+    const userLabel = document.getElementById('userLabel');
+    if (userLabel) {
+        userLabel.textContent = storedUser.firstName || 'User';
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('activeRole');
+            window.location.href = 'login.html';
+        });
+    }
+</script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

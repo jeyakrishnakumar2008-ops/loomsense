@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Power Loom | Login</title>
+        <link rel="stylesheet" href="auth.css" />
+    </head>
+    <body class="auth-page">
+        <div class="auth-shell">
+            <aside class="auth-panel">
+                <div class="brand-lockup">
+                    <div class="brand-mark">🏭</div>
+                    <div class="brand-copy">
+                        <h1>Power Loom</h1>
+                        <p>Smart monitoring system</p>
+                    </div>
+                </div>
+
+                <p class="panel-copy">
+                    Monitor power loom conditions in real time, prevent humidity issues,
+                    and keep your production line running safely.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-badge">📊</div>
+                        <span>Live dashboard and production insights</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-badge">⚡</div>
+                        <span>Energy usage and alert monitoring</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-badge">🔒</div>
+                        <span>Secure access for users and admin staff</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="auth-form-panel">
+                <div class="auth-header">
+                    <span class="auth-kicker">Welcome back</span>
+                    <h2>Sign In</h2>
+                    <p>Access your dashboard with your account credentials.</p>
+                </div>
+
+                <div class="role-toggle" aria-label="Choose login role">
+                    <button class="role-btn active" type="button" data-role="user">User Sign In</button>
+                    <button class="role-btn" type="button" data-role="admin">Admin Sign In</button>
+                </div>
+
+                <form class="auth-form" id="loginForm">
+                    <div class="field">
+                        <label for="loginEmail">Email address</label>
+                        <input id="loginEmail" name="email" type="email" placeholder="name@company.com" required />
+                    </div>
+
+                    <div class="field">
+                        <label for="loginPassword">Password</label>
+                        <input id="loginPassword" name="password" type="password" placeholder="Enter your password" required />
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-wrap">
+                            <input type="checkbox" name="remember" />
+                            <span>Remember me</span>
+                        </label>
+                        <a href="register.html" class="link-text">Create account</a>
+                    </div>
+
+                    <button class="primary-btn" type="submit">Sign In</button>
+                    <div id="loginStatus" class="status-message" aria-live="polite"></div>
+                </form>
+            </main>
+        </div>
+
+        <script>
+            const roleButtons = document.querySelectorAll('.role-btn');
+            const loginForm = document.getElementById('loginForm');
+            const loginStatus = document.getElementById('loginStatus');
+            let selectedRole = 'user';
+
+            roleButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    roleButtons.forEach((item) => item.classList.remove('active'));
+                    button.classList.add('active');
+                    selectedRole = button.dataset.role;
+                    loginStatus.textContent = selectedRole === 'admin'
+                        ? 'Admin access selected.'
+                        : 'User access selected.';
+                    loginStatus.classList.remove('error');
+                });
+            });
+
+            function showLoginError(message) {
+                loginStatus.textContent = message;
+                loginStatus.classList.add('error');
+            }
+
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!email || !password) {
+                    showLoginError('Please enter both email and password.');
+                    return;
+                }
+
+                if (!emailPattern.test(email)) {
+                    showLoginError('Please enter a valid email address.');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showLoginError('Password must be at least 6 characters long.');
+                    return;
+                }
+
+                const accounts = JSON.parse(localStorage.getItem('powerLoomAccounts') || '[]');
+                const matchedUser = accounts.find((user) =>
+                    user.email.toLowerCase() === email.toLowerCase() &&
+                    user.role === selectedRole &&
+                    user.password === password
+                );
+
+                if (!matchedUser) {
+                    showLoginError('Invalid credentials for the selected role.');
+                    return;
+                }
+
+                localStorage.setItem('activeRole', selectedRole);
+                localStorage.setItem('loggedInUser', JSON.stringify({
+                    firstName: matchedUser.firstName,
+                    lastName: matchedUser.lastName,
+                    email: matchedUser.email,
+                    role: selectedRole
+                }));
+
+                loginStatus.textContent = 'Login successful. Redirecting...';
+                loginStatus.classList.remove('error');
+
+                setTimeout(() => {
+                    window.location.href = selectedRole === 'admin' ? 'admin-dashboard.html' : 'index.html';
+                }, 500);
+            });
+        </script>
+    </body>
+</html>

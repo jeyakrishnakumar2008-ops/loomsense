@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Power Loom | Admin Dashboard</title>
+        <link rel="stylesheet" href="auth.css" />
+    </head>
+    <body class="admin-layout">
+        <header class="admin-header">
+            <div class="admin-brand">
+                <div class="admin-brand-mark">🏭</div>
+                <div>
+                    <h1>Power Loom Admin</h1>
+                </div>
+            </div>
+
+            <div class="admin-user">
+                <div class="admin-user-badge">A</div>
+                <div>
+                    <strong id="adminName">Admin Panel</strong>
+                    <div style="font-size: 0.75rem; opacity: 0.8;">System Overview</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-body">
+            <aside class="admin-sidebar">
+                <nav class="admin-nav">
+                    <button class="admin-nav-item active" type="button">🏠 Overview</button>
+                    <button class="admin-nav-item" type="button">📊 Reports</button>
+                    <button class="admin-nav-item" type="button">🔔 Alerts</button>
+                    <button class="admin-nav-item" type="button">⚙️ Settings</button>
+                    <button class="admin-nav-item" type="button" onclick="localStorage.clear(); window.location.href='login.html';">🚪 Logout</button>
+                </nav>
+            </aside>
+
+            <main class="admin-content">
+                <section class="dashboard-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Active Looms</div>
+                        <div class="metric-value">
+                            <span class="metric-number">24</span>
+                            <span class="metric-trend trend-up">+8%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Humidity Risk</div>
+                        <div class="metric-value">
+                            <span class="metric-number">12</span>
+                            <span class="metric-trend trend-down">-2%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Energy Saved</div>
+                        <div class="metric-value">
+                            <span class="metric-number">1.8k</span>
+                            <span class="metric-trend trend-up">+15%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Alerts</div>
+                        <div class="metric-value">
+                            <span class="metric-number">4</span>
+                            <span class="metric-trend trend-down">2 urgent</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-panel">
+                    <div class="panel-head">
+                        <div class="panel-title">Recent Operations</div>
+                        <span class="status-pill status-good">System Healthy</span>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Machine</th>
+                                <th>Area</th>
+                                <th>Humidity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PL-102</td>
+                                <td>Weaving Hall</td>
+                                <td>68.4%</td>
+                                <td><span class="status-pill status-good">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td>PL-117</td>
+                                <td>Processing Unit</td>
+                                <td>74.1%</td>
+                                <td><span class="status-pill status-alert">Check</span></td>
+                            </tr>
+                            <tr>
+                                <td>PL-128</td>
+                                <td>Storage Bay</td>
+                                <td>66.8%</td>
+                                <td><span class="status-pill status-good">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td>PL-134</td>
+                                <td>Power Room</td>
+                                <td>71.9%</td>
+                                <td><span class="status-pill status-alert">Warning</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+
+        <script>
+            let storedUser = null;
+            try {
+                const rawUser = localStorage.getItem('loggedInUser');
+                storedUser = rawUser ? JSON.parse(rawUser) : null;
+            } catch (error) {
+                storedUser = null;
+            }
+
+            if (!storedUser || storedUser.role !== 'admin' || !storedUser.email) {
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('activeRole');
+                window.location.href = 'login.html';
+            } else {
+                const adminName = document.getElementById('adminName');
+                if (adminName) {
+                    adminName.textContent = storedUser.firstName ? `${storedUser.firstName} Admin` : 'Admin Panel';
+                }
+            }
+        </script>
+    </body>
+</html>
